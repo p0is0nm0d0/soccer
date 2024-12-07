@@ -3,7 +3,7 @@
 
 This is Simple API with Laravel 11 inc luded API Documentation. It help you to find some feature which you get soccer information.
 
-How use this API?
+**How use this API?**
 1. Please you download on Code button then  choose Download as Zip.
 2. Extract File soccer to  your htdocs folder or www if you using xampp packges on your windows environment.Or, If you using linux. extract this file to your www folder under Linux Environment
 3. Please enter soccer folder
