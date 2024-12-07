@@ -14,10 +14,10 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/login": {
+        "/api/v1/login": {
             "post": {
                 "summary": "Login",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "operationId": "da2ca4d7a5cdec77b8b45a20373535cb",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -90,10 +90,10 @@
                 }
             }
         },
-        "/api/logout": {
+        "/api/v1/logout": {
             "post": {
                 "summary": "Logout",
-                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "operationId": "c4eddaf1a2e990cc90e4326c0d731d41",
                 "responses": {
                     "200": {
                         "description": "Successful",
@@ -118,13 +118,119 @@
                 }
             }
         },
-        "/api/matches": {
+        "/api/v1/matches": {
+            "get": {
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get All Matches",
+                "operationId": "c6d0321fb7dd38111ba9d5b3e5e5f2ce",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Matches retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Bekasi FC"
+                                                    },
+                                                    "logo": {
+                                                        "type": "string",
+                                                        "example": "bekasi.png"
+                                                    },
+                                                    "founded_year": {
+                                                        "type": "integer",
+                                                        "example": "2004"
+                                                    },
+                                                    "address": {
+                                                        "type": "string",
+                                                        "example": "Bekasi"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Tambun"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "404"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Team not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "401"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Matches"
                 ],
                 "summary": "Store a new matches",
-                "operationId": "9623a1e5272897c53743e12540596c9a",
+                "operationId": "0ed0853aed4d51f607070c9a5cdc3247",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -226,13 +332,13 @@
                 ]
             }
         },
-        "/api/matches/{id}": {
+        "/api/v1/matches/{id}": {
             "get": {
                 "tags": [
                     "Matches"
                 ],
                 "summary": "Get matches detail by id",
-                "operationId": "5ba8ed54d3a9be3c2e20cd8745e36950",
+                "operationId": "ecc7621dd17272ae5a93e22eb1002d39",
                 "parameters": [
                     {
                         "name": "id",
@@ -251,6 +357,41 @@
                                         "statuscode": {
                                             "type": "integer",
                                             "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Matches found"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "match_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-12-01"
+                                                },
+                                                "match_time": {
+                                                    "type": "string",
+                                                    "format": "time",
+                                                    "example": "18:00:00"
+                                                },
+                                                "home_team_id": {
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                },
+                                                "away_team_id": {
+                                                    "type": "integer",
+                                                    "example": "4"
+                                                },
+                                                "home_team_score": {
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                },
+                                                "away_team_score": {
+                                                    "type": "integer",
+                                                    "example": "4"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -309,8 +450,8 @@
                 "tags": [
                     "Matches"
                 ],
-                "summary": "Store a new matches",
-                "operationId": "5635671607ac8d6430cb5f32a3b9cbb7",
+                "summary": "Update matches",
+                "operationId": "3fee2b8dec584b93e841f3443b4ca94c",
                 "parameters": [
                     {
                         "name": "id",
@@ -427,7 +568,7 @@
                     "Matches"
                 ],
                 "summary": "Delete matches",
-                "operationId": "200e7b8c89ab26cc74deaa739d011d8c",
+                "operationId": "ff50a0ac4f30af5fa642dc19df716841",
                 "parameters": [
                     {
                         "name": "id",
@@ -508,13 +649,210 @@
                 ]
             }
         },
-        "/api/players": {
+        "/api/v1/matches/report": {
+            "get": {
+                "tags": [
+                    "Matches"
+                ],
+                "summary": "Get All matches as Report",
+                "operationId": "4c6f87e964a973660e9c7c0017e28ded",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Team id",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data found"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "404"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "401"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/players": {
+            "get": {
+                "tags": [
+                    "Players"
+                ],
+                "summary": "Get All Players",
+                "operationId": "16812a1b3b1d32a4a62cddb75eff8f4b",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Players retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "team_id": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Andi"
+                                                    },
+                                                    "height": {
+                                                        "type": "integer",
+                                                        "example": "175"
+                                                    },
+                                                    "weight": {
+                                                        "type": "integer",
+                                                        "example": "60"
+                                                    },
+                                                    "position": {
+                                                        "type": "string",
+                                                        "example": "Penyerang"
+                                                    },
+                                                    "jersey_number": {
+                                                        "type": "integer",
+                                                        "example": "11"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "404"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Team not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "401"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Players"
                 ],
                 "summary": "Store a new players",
-                "operationId": "4e2752a0305de0adfa2a8c9ac1aa37a9",
+                "operationId": "f0d94f130e4e7b90415d0acbbd3336d4",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -624,13 +962,13 @@
                 ]
             }
         },
-        "/api/players/{id}": {
+        "/api/v1/players/{id}": {
             "get": {
                 "tags": [
                     "Players"
                 ],
                 "summary": "Get players detail by id",
-                "operationId": "dbef515d1b5f749e736bca18efe444e7",
+                "operationId": "f3c721f0d7ec079ccd6da019590e4262",
                 "parameters": [
                     {
                         "name": "id",
@@ -649,6 +987,43 @@
                                         "statuscode": {
                                             "type": "integer",
                                             "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player found"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                },
+                                                "team_id": {
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Andi"
+                                                },
+                                                "height": {
+                                                    "type": "integer",
+                                                    "example": "175"
+                                                },
+                                                "weight": {
+                                                    "type": "integer",
+                                                    "example": "60"
+                                                },
+                                                "position": {
+                                                    "type": "string",
+                                                    "example": "Penyerang"
+                                                },
+                                                "jersey_number": {
+                                                    "type": "integer",
+                                                    "example": "11"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -707,8 +1082,8 @@
                 "tags": [
                     "Players"
                 ],
-                "summary": "Store a new players",
-                "operationId": "b0080e3337c0615ba30865afac7ad398",
+                "summary": "Update players",
+                "operationId": "1be3606d08478fb7fb1e21bff3a3b02a",
                 "parameters": [
                     {
                         "name": "id",
@@ -832,8 +1207,8 @@
                 "tags": [
                     "Players"
                 ],
-                "summary": "Store a new team",
-                "operationId": "a0d43e3c36f501bca2882e19d853c171",
+                "summary": "Delete Player",
+                "operationId": "f4536a8612d9f8f0707e37c883f53818",
                 "parameters": [
                     {
                         "name": "id",
@@ -914,20 +1289,123 @@
                 ]
             }
         },
-        "/api/teams": {
+        "/api/v1/teams": {
+            "get": {
+                "tags": [
+                    "Teams"
+                ],
+                "summary": "Get All teams",
+                "operationId": "66de14dea23a1cf63a1dee58a5cc5905",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "200"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Teams retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Bekasi FC"
+                                                    },
+                                                    "logo": {
+                                                        "type": "string",
+                                                        "example": "bekasi.png"
+                                                    },
+                                                    "founded_year": {
+                                                        "type": "integer",
+                                                        "example": "2004"
+                                                    },
+                                                    "address": {
+                                                        "type": "string",
+                                                        "example": "Bekasi"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Tambun"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Team not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "404"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Team not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "statuscode": {
+                                            "type": "integer",
+                                            "example": "401"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Teams"
                 ],
                 "summary": "Store a new team",
-                "operationId": "b05c08b4a03b1d708fc94bf7dd5f8e46",
+                "operationId": "fdf48d4cde576b3ff280b0e588981c4f",
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "required": [
-                                    "name"
-                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
@@ -948,6 +1426,11 @@
                                         "type": "string",
                                         "format": "text",
                                         "example": "Jakarta"
+                                    },
+                                    "logo": {
+                                        "description": "Upload Team's Logo",
+                                        "type": "string",
+                                        "format": "file"
                                     }
                                 },
                                 "type": "object"
@@ -1024,13 +1507,13 @@
                 ]
             }
         },
-        "/api/teams/{id}": {
+        "/api/v1/teams/{id}": {
             "get": {
                 "tags": [
                     "Teams"
                 ],
                 "summary": "Get teams detail by id",
-                "operationId": "ab05003decb5cbc16154382836f51e3e",
+                "operationId": "bf2640af970d006d2afac946fd93f450",
                 "parameters": [
                     {
                         "name": "id",
@@ -1052,7 +1535,36 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Logout successful"
+                                            "example": "Team found"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Bekasi FC"
+                                                },
+                                                "logo": {
+                                                    "type": "string",
+                                                    "example": "bekasi.png"
+                                                },
+                                                "founded_year": {
+                                                    "type": "integer",
+                                                    "example": "2004"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Bekasi"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "Tambun"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1112,7 +1624,7 @@
                     "Teams"
                 ],
                 "summary": "Update a team",
-                "operationId": "172602424f911881f80fc01c915f1e57",
+                "operationId": "4b6c0c9fc6aaa568cbd405d57a878fbf",
                 "parameters": [
                     {
                         "name": "id",
@@ -1129,7 +1641,10 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name"
+                                    "name",
+                                    "founded_year",
+                                    "address",
+                                    "city"
                                 ],
                                 "properties": {
                                     "name": {
@@ -1229,8 +1744,8 @@
                 "tags": [
                     "Teams"
                 ],
-                "summary": "Store a new team",
-                "operationId": "9b992594932c3e54aa58b58c3c1e933c",
+                "summary": "Delete team",
+                "operationId": "11e231e8473c3df157fc2660394a1ba1",
                 "parameters": [
                     {
                         "name": "id",
