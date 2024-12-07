@@ -1,7 +1,7 @@
 ## Soccer API
 
 
-This is Simple API with Laravel 11 inc luded API Documentation. It help you to find some feature which you get soccer information.
+This is Simple API with Laravel 11 included API Documentation. It help you to find some feature which you get soccer information.
 
 **How use this API?**
 1. Please you download on Code button then  choose Download as Zip.
