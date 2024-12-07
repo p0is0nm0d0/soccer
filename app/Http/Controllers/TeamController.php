@@ -4,17 +4,114 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\Team;
-
+use Illuminate\Http\JsonResponse;
 
 
 class TeamController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *      tags={"Teams"},
+     *      path="/api/teams",
+     *      summary="Get All teams",
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="200"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Teams retrieved successfully"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array", 
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                          property="id", 
+     *                          type="integer", 
+     *                          example="2"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="name", 
+     *                          type="string", 
+     *                          example="Bekasi FC"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="logo", 
+     *                          type="string", 
+     *                          example="bekasi.png"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="founded_year", 
+     *                          type="integer", 
+     *                          example="2004"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="address", 
+     *                          type="string", 
+     *                          example="Bekasi"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="city", 
+     *                          type="string", 
+     *                          example="Tambun"
+     *                      ),
+     *                  )
+     *              ),
+     *              
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Team not Found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Team not Found"
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $teams = Team::all();
+
+        return response()->json([
+            'statuscode' => 200,
+            'message' => 'Teams retrieved successfully',
+            'data' => $teams,
+        ]);
     }
 
     /**
@@ -24,32 +121,41 @@ class TeamController extends Controller
      *      summary="Store a new team",
      *      security={{"sanctum":{}}},
      *      @OA\RequestBody(
-     *          @OA\JsonContent(
-     *              required={"name"},
-     *              @OA\Property(
-     *                 property="name", 
-     *                 type="string", 
-     *                 format="text", 
-     *                 example="Bekasi FC"
-     *              ),
-     *              @OA\Property(
-     *                 property="founded_year", 
-     *                 type="integer", 
-     *                 format="text", 
-     *                 example="2000"
-     *              ),
-     *              @OA\Property(
-     *                 property="address", 
-     *                 type="string", 
-     *                 format="text", 
-     *                 example="Jl hayam wuruk no 67"
-     *              ),
-     *              @OA\Property(
-     *                 property="city", 
-     *                 type="string", 
-     *                 format="text", 
-     *                 example="Jakarta"
-     *              ),
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  required={"name", "founded_year", "address", "city"},
+     *                  @OA\Property(
+     *                      property="name", 
+     *                      type="string", 
+     *                      format="text", 
+     *                      example="Bekasi FC"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="founded_year", 
+     *                      type="integer", 
+     *                      format="text", 
+     *                      example="2000"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="address", 
+     *                      type="string", 
+     *                      format="text", 
+     *                      example="Jl hayam wuruk no 67"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="city", 
+     *                      type="string", 
+     *                      format="text", 
+     *                      example="Jakarta"
+     *                  ),
+     *                  @OA\Property(
+     *                      description="Upload Team's Logo",
+     *                      property="logo",
+     *                      type="string",
+     *                      format="file",
+     *                  ),
+     *              )
      *          )
      *      ),  
      *      @OA\Response(
@@ -141,8 +247,43 @@ class TeamController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Logout successful"
+     *                  example="Team found"
      *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object", 
+     *                  @OA\Property(
+     *                      property="id", 
+     *                      type="integer", 
+     *                      example="2"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="name", 
+     *                      type="string", 
+     *                      example="Bekasi FC"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="logo", 
+     *                      type="string", 
+     *                      example="bekasi.png"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="founded_year", 
+     *                      type="integer", 
+     *                      example="2004"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="address", 
+     *                      type="string", 
+     *                      example="Bekasi"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="city", 
+     *                      type="string", 
+     *                      example="Tambun"
+     *                  ),
+     *              ),
+     *              
      *          ), 
      *      ),
      *      @OA\Response(
@@ -190,6 +331,13 @@ class TeamController extends Controller
                 'message' => 'Team not found'
             ], 404);
         }
+        else {
+            return response()->json([
+                'statuscode' => 200,
+                'message' => 'Team found',
+                'data' => $team
+            ], 200);
+        }
 
         return response()->json($team, 200);
     }
@@ -212,7 +360,7 @@ class TeamController extends Controller
      *      ),
      *      @OA\RequestBody(
      *          @OA\JsonContent(
-     *              required={"name"},
+     *              required={"name", "founded_year", "address", "city"},
      *              @OA\Property(
      *                 property="name", 
      *                 type="string", 
@@ -314,7 +462,7 @@ class TeamController extends Controller
      * @OA\Delete(
      *      tags={"Teams"},
      *      path="/api/teams/{id}",
-     *      summary="Store a new team",
+     *      summary="Delete team",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
      *          name="id",

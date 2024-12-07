@@ -4,15 +4,119 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\Player;
+use Illuminate\Http\JsonResponse;
 
 class PlayerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *      tags={"Players"},
+     *      path="/api/players",
+     *      summary="Get All Players",
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="200"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Players retrieved successfully"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array", 
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                          property="id", 
+     *                          type="integer", 
+     *                          example="2"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="team_id", 
+     *                          type="integer", 
+     *                          example="1"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="name", 
+     *                          type="string", 
+     *                          example="Andi"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="height", 
+     *                          type="integer", 
+     *                          example="175"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="weight", 
+     *                          type="integer", 
+     *                          example="60"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="position", 
+     *                          type="string", 
+     *                          example="Penyerang"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="jersey_number", 
+     *                          type="integer", 
+     *                          example="11"
+     *                      ),
+     *                  )
+     *              ),
+     *              
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Team not Found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Team not Found"
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
         //
+        $players = Player::with('team')->get();
+
+        return response()->json([
+            'statuscode' => 200,
+            'message' => 'Players retrieved successfully',
+            'data' => $players,
+        ]);
     }
 
     /**
@@ -154,12 +258,55 @@ class PlayerController extends Controller
      *          response="200", 
      *          description="Success",
      *          @OA\JsonContent(
-     *              @OA\Property(
+     *               @OA\Property(
      *                  property="statuscode", 
      *                  type="integer", 
      *                  example="200"
      *              ),
-     *              
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Player found"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object", 
+     *                  @OA\Property(
+     *                      property="id", 
+     *                      type="integer", 
+     *                      example="2"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="team_id", 
+     *                      type="integer", 
+     *                      example="1"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="name", 
+     *                      type="string", 
+     *                      example="Andi"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="height", 
+     *                      type="integer", 
+     *                      example="175"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="weight", 
+     *                      type="integer", 
+     *                      example="60"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="position", 
+     *                      type="string", 
+     *                      example="Penyerang"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="jersey_number", 
+     *                      type="integer", 
+     *                      example="11"
+     *                  ),
+     *              ),
      *          ), 
      *      ),
      *      @OA\Response(
@@ -213,7 +360,7 @@ class PlayerController extends Controller
      * @OA\Put(
      *      tags={"Players"},
      *      path="/api/players/{id}",
-     *      summary="Store a new players",
+     *      summary="Update players",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
      *          name="id",
@@ -338,7 +485,7 @@ class PlayerController extends Controller
      * @OA\Delete(
      *      tags={"Players"},
      *      path="/api/players/{id}",
-     *      summary="Store a new team",
+     *      summary="Delete Player",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
      *          name="id",

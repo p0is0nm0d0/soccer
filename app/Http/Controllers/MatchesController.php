@@ -4,15 +4,113 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\Matches;
+use Illuminate\Http\JsonResponse;
 
 class MatchesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *      tags={"Matches"},
+     *      path="/api/matches",
+     *      summary="Get All Matches",
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="200"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Matches retrieved successfully"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array", 
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                          property="id", 
+     *                          type="integer", 
+     *                          example="2"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="name", 
+     *                          type="string", 
+     *                          example="Bekasi FC"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="logo", 
+     *                          type="string", 
+     *                          example="bekasi.png"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="founded_year", 
+     *                          type="integer", 
+     *                          example="2004"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="address", 
+     *                          type="string", 
+     *                          example="Bekasi"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="city", 
+     *                          type="string", 
+     *                          example="Tambun"
+     *                      ),
+     *                  )
+     *              ),
+     *              
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Team not Found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Team not Found"
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $matches = Matches::with(['homeTeam', 'awayTeam'])->get();
+
+        return response()->json([
+            'statuscode' => 200,
+            'message' => 'Matches retrieved successfully',
+            'data' => $matches,
+        ]);
     }
 
     /**
@@ -140,12 +238,52 @@ class MatchesController extends Controller
      *          response="200", 
      *          description="Success",
      *          @OA\JsonContent(
-     *              @OA\Property(
+     *               @OA\Property(
      *                  property="statuscode", 
      *                  type="integer", 
      *                  example="200"
      *              ),
-     *              
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Matches found"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object", 
+     *                  @OA\Property(
+     *                      property="match_date", 
+     *                      type="string",
+     *                      format="date", 
+     *                      example="2024-12-01"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="match_time", 
+     *                      type="string",
+     *                      format="time", 
+     *                      example="18:00:00"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="home_team_id", 
+     *                      type="integer", 
+     *                      example="2"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="away_team_id", 
+     *                      type="integer", 
+     *                      example="4"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="home_team_score", 
+     *                      type="integer", 
+     *                      example="2"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="away_team_score", 
+     *                      type="integer", 
+     *                      example="4"
+     *                  ),
+     *              ),
      *          ), 
      *      ),
      *      @OA\Response(
@@ -199,7 +337,7 @@ class MatchesController extends Controller
      * @OA\Put(
      *      tags={"Matches"},
      *      path="/api/matches/{id}",
-     *      summary="Store a new matches",
+     *      summary="Update matches",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
      *          name="id",
@@ -394,8 +532,8 @@ class MatchesController extends Controller
     /**
      * @OA\Get(
      *      tags={"Matches"},
-     *      path="/api/matches/{id}",
-     *      summary="Get matches detail by id",
+     *      path="/api/matches/report",
+     *      summary="Get All matches as Report",
      *      @OA\Parameter(
      *         name="id",
      *         in="query",
