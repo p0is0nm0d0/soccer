@@ -16,7 +16,88 @@ class MatchesController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *      tags={"Matches"},
+     *      path="/api/matches",
+     *      summary="Store a new matches",
+     *      security={{"sanctum":{}}},
+     *      @OA\RequestBody(
+     *          @OA\JsonContent(
+     *              required={"match_date"},
+     *              @OA\Property(
+     *                 property="match_date", 
+     *                 type="string", 
+     *                 format="date", 
+     *                 example="2024-12-01"
+     *              ),
+     *              @OA\Property(
+     *                 property="match_time", 
+     *                 type="string", 
+     *                 format="time", 
+     *                 example="18:00:00"
+     *              ),
+     *              @OA\Property(
+     *                 property="home_team_id", 
+     *                 type="integer", 
+     *                 example="1"
+     *              ),
+     *              @OA\Property(
+     *                 property="away_team_id", 
+     *                 type="integer", 
+     *                 example="2"
+     *              ),
+     *          )
+     *      ),  
+     *      @OA\Response(
+     *          response="201", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="201"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Match created successfully"
+     *              ),
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="422",
+     *         description="one of fields must br required",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="422"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="The match date field is required."
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
     public function store(Request $request)
     {
@@ -44,7 +125,63 @@ class MatchesController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *      tags={"Matches"},
+     *      path="/api/matches/{id}",
+     *      summary="Get matches detail by id",
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Team id",
+     *         required=true,
+     *      ), 
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="200"
+     *              ),
+     *              
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Team not Found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Team not Found"
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
     public function show(string $id)
     {
@@ -59,7 +196,97 @@ class MatchesController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *      tags={"Matches"},
+     *      path="/api/matches/{id}",
+     *      summary="Store a new matches",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Match id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),    
+     *      @OA\RequestBody(
+     *          @OA\JsonContent(
+     *              required={"match_date"},
+     *              @OA\Property(
+     *                 property="match_date", 
+     *                 type="string", 
+     *                 format="date", 
+     *                 example="2024-12-01"
+     *              ),
+     *              @OA\Property(
+     *                 property="match_time", 
+     *                 type="string", 
+     *                 format="time", 
+     *                 example="18:00:00"
+     *              ),
+     *              @OA\Property(
+     *                 property="home_team_id", 
+     *                 type="integer", 
+     *                 example="1"
+     *              ),
+     *              @OA\Property(
+     *                 property="away_team_id", 
+     *                 type="integer", 
+     *                 example="2"
+     *              ),
+     *          )
+     *      ),  
+     *      @OA\Response(
+     *          response="201", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="201"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Match updated successfully"
+     *              ),
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="422",
+     *         description="one of fields must br required",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="422"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="The match date field is required."
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -86,7 +313,70 @@ class MatchesController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *      tags={"Matches"},
+     *      path="/api/matches/{id}",
+     *      summary="Delete matches",
+     *      security={{"sanctum":{}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Match id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),    
+     *      @OA\Response(
+     *          response="201", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="201"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Match deleted successfully"
+     *              ),
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Match not found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Match not found."
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
      */
     public function destroy(string $id)
     {
@@ -100,6 +390,66 @@ class MatchesController extends Controller
     
         return response()->json(['message' => 'Match deleted successfully'], 200);
     }
+
+    /**
+     * @OA\Get(
+     *      tags={"Matches"},
+     *      path="/api/matches/{id}",
+     *      summary="Get matches detail by id",
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="query",
+     *         description="Team id",
+     *         required=true,
+     *      ), 
+     *      security={{"sanctum":{}}},
+     *      @OA\Response(
+     *          response="200", 
+     *          description="Success",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="200"
+     *              ),
+     *              
+     *          ), 
+     *      ),
+     *      @OA\Response(
+     *         response="404",
+     *         description="Team not Found",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="404"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Team not Found"
+     *              ),
+     *          ), 
+     *      ), 
+     *      @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="statuscode", 
+     *                  type="integer", 
+     *                  example="401"
+     *              ),
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Unauthenticated"
+     *              ),
+     *          ), 
+     *      ), 
+     *      
+     * )
+     */
 
     public function report()
     {
