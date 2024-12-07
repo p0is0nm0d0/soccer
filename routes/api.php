@@ -9,13 +9,14 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\MatchesController;
 use App\Http\Controllers\AuthController;
 
+Route::post('/login', [AuthController::class, 'login']); 
+
 Route::options('{any}', function () {
     return response()->json(['message' => 'CORS preflight response'], Response::HTTP_OK);
 })->where('any', '.*');
 
-Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum', 'throttle:60,1')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
