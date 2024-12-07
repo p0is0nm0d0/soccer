@@ -12,7 +12,7 @@ class TeamController extends Controller
     /**
      * @OA\Get(
      *      tags={"Teams"},
-     *      path="/api/teams",
+     *      path="/api/v1/teams",
      *      summary="Get All teams",
      *      security={{"sanctum":{}}},
      *      @OA\Response(
@@ -117,14 +117,13 @@ class TeamController extends Controller
     /**
      * @OA\Post(
      *      tags={"Teams"},
-     *      path="/api/teams",
+     *      path="/api/v1/teams",
      *      summary="Store a new team",
      *      security={{"sanctum":{}}},
      *      @OA\RequestBody(
      *          @OA\MediaType(
      *              mediaType="multipart/form-data",
      *              @OA\Schema(
-     *                  required={"name", "founded_year", "address", "city"},
      *                  @OA\Property(
      *                      property="name", 
      *                      type="string", 
@@ -211,22 +210,33 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $request->validate([
-            'name' => 'required|string',
-            'founded_year' => 'required|integer',
-            'address' => 'required|string',
-            'city' => 'required|string',
-        ]);
-    
-        $team = Team::create($request->all());
-        return response()->json($team, 201);
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'founded_year' => 'required|integer',
+                'address' => 'required|string',
+                'city' => 'required|string',
+            ]);
+        
+            $team = Team::create($request->all());
+                return response()->json([
+                    "statuscode" => 201,
+                    "message" => "Team has been added successfully"
+                ], 201);
+                
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }    
     }
 
     /**
      * @OA\Get(
      *      tags={"Teams"},
-     *      path="/api/teams/{id}",
+     *      path="/api/v1/teams/{id}",
      *      summary="Get teams detail by id",
      *      @OA\Parameter(
      *         name="id",
@@ -346,7 +356,7 @@ class TeamController extends Controller
     /**
      * @OA\Put(
      *      tags={"Teams"},
-     *      path="/api/teams/{id}",
+     *      path="/api/v1/teams/{id}",
      *      summary="Update a team",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
@@ -443,25 +453,36 @@ class TeamController extends Controller
         $team = Team::find($id);
 
         if (!$team) {
-            return response()->json(['message' => 'Team not found'], 404);
+            return response()->json([
+                "statuscode" => 404,
+                'message' => 'Team not found'
+            ], 404);
         }
 
-        $request->validate([
-            'name' => 'sometimes|required|string',
-            'founded_year' => 'sometimes|required|integer',
-            'address' => 'sometimes|required|string',
-            'city' => 'sometimes|required|string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'sometimes|required|string',
+                'founded_year' => 'sometimes|required|integer',
+                'address' => 'sometimes|required|string',
+                'city' => 'sometimes|required|string',
+            ]);
 
-        $team->update($request->all());
+            $team->update($request->all());
 
-        return response()->json(['message' => 'Team updated successfully', 'team' => $team], 200);
+            return response()->json(['message' => 'Team updated successfully', 'team' => $team], 200);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }    
     }
 
     /**
      * @OA\Delete(
      *      tags={"Teams"},
-     *      path="/api/teams/{id}",
+     *      path="/api/v1/teams/{id}",
      *      summary="Delete team",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
@@ -530,12 +551,18 @@ class TeamController extends Controller
         $team = Team::find($id);
 
         if (!$team) {
-            return response()->json(['message' => 'Team not found'], 404);
+            return response()->json([
+                "statuscode" => 404,
+                'message' => 'Team not found'
+            ], 404);
         }
 
         $team->delete();
 
-        return response()->json(['message' => 'Team deleted successfully'], 200);
+        return response()->json([
+            "statuscode" => 200,
+            'message' => 'Team deleted successfully'
+        ], 200);
     }
 
 }

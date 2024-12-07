@@ -11,7 +11,7 @@ class PlayerController extends Controller
     /**
      * @OA\Get(
      *      tags={"Players"},
-     *      path="/api/players",
+     *      path="/api/v1/players",
      *      summary="Get All Players",
      *      security={{"sanctum":{}}},
      *      @OA\Response(
@@ -122,7 +122,7 @@ class PlayerController extends Controller
     /**
      * @OA\Post(
      *      tags={"Players"},
-     *      path="/api/players",
+     *      path="/api/v1/players",
      *      summary="Store a new players",
      *      security={{"sanctum":{}}},
      *      @OA\RequestBody(
@@ -215,37 +215,45 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data yang masuk
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'height' => 'required|integer|min:0',
-            'weight' => 'required|integer|min:0',
-            'position' => 'required|in:penyerang,gelandang,bertahan,penjaga gawang',
-            'jersey_number' => 'required|integer|unique:players,jersey_number',
-            'team_id' => 'required|exists:teams,id',
-        ]);
-    
-        // Simpan data pemain
-        $player = Player::create([
-            'name' => $request->input('name'),
-            'height' => $request->input('height'),
-            'weight' => $request->input('weight'),
-            'position' => $request->input('position'),
-            'jersey_number' => $request->input('jersey_number'),
-            'team_id' => $request->input('team_id'),
-        ]);
-    
-        return response()->json([
-            'statuscode' => 201,
-            'message' => 'Player created successfully',
-        ], 201);
+        try {
+            // Validasi data yang masuk
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'height' => 'required|integer|min:0',
+                'weight' => 'required|integer|min:0',
+                'position' => 'required|in:penyerang,gelandang,bertahan,penjaga gawang',
+                'jersey_number' => 'required|integer|unique:players,jersey_number',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+        
+            // Simpan data pemain
+            $player = Player::create([
+                'name' => $request->input('name'),
+                'height' => $request->input('height'),
+                'weight' => $request->input('weight'),
+                'position' => $request->input('position'),
+                'jersey_number' => $request->input('jersey_number'),
+                'team_id' => $request->input('team_id'),
+            ]);
+        
+            return response()->json([
+                'statuscode' => 201,
+                'message' => 'Player created successfully',
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }    
     }
     
 
     /**
      * @OA\Get(
      *      tags={"Players"},
-     *      path="/api/players/{id}",
+     *      path="/api/v1/players/{id}",
      *      summary="Get players detail by id",
      *      @OA\Parameter(
      *         name="id",
@@ -359,7 +367,7 @@ class PlayerController extends Controller
     /**
      * @OA\Put(
      *      tags={"Players"},
-     *      path="/api/players/{id}",
+     *      path="/api/v1/players/{id}",
      *      summary="Update players",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
@@ -464,27 +472,38 @@ class PlayerController extends Controller
         $player = Player::find($id);
 
         if (!$player) {
-            return response()->json(['message' => 'Player not found'], 404);
+            return response()->json([
+                'statuscode' => 404,
+                'message' => 'Player not found'
+            ], 404);
         }
 
-        $request->validate([
-            'name' => 'sometimes|required|string',
-            'height' => 'sometimes|required|integer',
-            'weight' => 'sometimes|required|integer',
-            'position' => 'sometimes|required|in:penyerang,gelandang,bertahan,penjaga gawang',
-            'jersey_number' => 'sometimes|required|integer|unique:players,jersey_number,' . $id,
-        ]);
+        try {
+            $request->validate([
+                'name' => 'sometimes|required|string',
+                'height' => 'sometimes|required|integer',
+                'weight' => 'sometimes|required|integer',
+                'position' => 'sometimes|required|in:penyerang,gelandang,bertahan,penjaga gawang',
+                'jersey_number' => 'sometimes|required|integer|unique:players,jersey_number,' . $id,
+            ]);
 
-        $player->update($request->all());
+            $player->update($request->all());
 
-        return response()->json(['message' => 'Player updated successfully', 'player' => $player], 200);
+            return response()->json(['message' => 'Player updated successfully', 'player' => $player], 200);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }    
     }
 
 
     /**
      * @OA\Delete(
      *      tags={"Players"},
-     *      path="/api/players/{id}",
+     *      path="/api/v1/players/{id}",
      *      summary="Delete Player",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(

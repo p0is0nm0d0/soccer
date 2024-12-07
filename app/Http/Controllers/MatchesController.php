@@ -11,7 +11,7 @@ class MatchesController extends Controller
     /**
      * @OA\Get(
      *      tags={"Matches"},
-     *      path="/api/matches",
+     *      path="/api/v1/matches",
      *      summary="Get All Matches",
      *      security={{"sanctum":{}}},
      *      @OA\Response(
@@ -116,7 +116,7 @@ class MatchesController extends Controller
     /**
      * @OA\Post(
      *      tags={"Matches"},
-     *      path="/api/matches",
+     *      path="/api/v1/matches",
      *      summary="Store a new matches",
      *      security={{"sanctum":{}}},
      *      @OA\RequestBody(
@@ -200,32 +200,41 @@ class MatchesController extends Controller
     public function store(Request $request)
     {
         //
-        // Validasi data yang masuk
-        $request->validate([
-            'match_date' => 'required|date',
-            'match_time' => 'required|date_format:H:i',
-            'home_team_id' => 'required|exists:teams,id|different:away_team_id',
-            'away_team_id' => 'required|exists:teams,id',
-        ]);
+        try {
+            // Validasi data yang masuk
+            $request->validate([
+                'match_date' => 'required|date',
+                'match_time' => 'required|date_format:H:i',
+                'home_team_id' => 'required|exists:teams,id|different:away_team_id',
+                'away_team_id' => 'required|exists:teams,id',
+            ]);
 
-        // Simpan data pertandingan
-        $match = Matches::create([
-            'match_date' => $request->input('match_date'),
-            'match_time' => $request->input('match_time'),
-            'home_team_id' => $request->input('home_team_id'),
-            'away_team_id' => $request->input('away_team_id'),
-        ]);
+            // Simpan data pertandingan
+            $match = Matches::create([
+                'match_date' => $request->input('match_date'),
+                'match_time' => $request->input('match_time'),
+                'home_team_id' => $request->input('home_team_id'),
+                'away_team_id' => $request->input('away_team_id'),
+            ]);
 
-        return response()->json([
-            'message' => 'Match created successfully',
-            'match' => $match,
-        ], 201);
+            return response()->json([
+                'statuscode' => 201,
+                'message' => 'Match created successfully',
+                'match' => $match,
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }        
     }
 
     /**
      * @OA\Get(
      *      tags={"Matches"},
-     *      path="/api/matches/{id}",
+     *      path="/api/v1/matches/{id}",
      *      summary="Get matches detail by id",
      *      @OA\Parameter(
      *         name="id",
@@ -336,7 +345,7 @@ class MatchesController extends Controller
     /**
      * @OA\Put(
      *      tags={"Matches"},
-     *      path="/api/matches/{id}",
+     *      path="/api/v1/matches/{id}",
      *      summary="Update matches",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
@@ -432,28 +441,42 @@ class MatchesController extends Controller
         $match = Matches::find($id);
 
         if (!$match) {
-            return response()->json(['message' => 'Match not found'], 404);
+            return response()->json([
+                'statuscode' => 404,
+                'message' => 'Match not found'
+            ], 404);
         }
 
-        $request->validate([
-            'match_date' => 'sometimes|required|date',
-            'match_time' => 'sometimes|required',
-            'home_team_id' => 'sometimes|required|exists:teams,id',
-            'away_team_id' => 'sometimes|required|exists:teams,id',
-            'home_score' => 'sometimes|nullable|integer',
-            'away_score' => 'sometimes|nullable|integer',
-        ]);
+        try {
+            $request->validate([
+                'match_date' => 'sometimes|required|date',
+                'match_time' => 'sometimes|required',
+                'home_team_id' => 'sometimes|required|exists:teams,id',
+                'away_team_id' => 'sometimes|required|exists:teams,id',
+                'home_score' => 'sometimes|nullable|integer',
+                'away_score' => 'sometimes|nullable|integer',
+            ]);
 
-        $match->update($request->all());
+            $match->update($request->all());
 
-        return response()->json(['message' => 'Match updated successfully', 'match' => $match], 200);
+            return response()->json([
+                'statuscode' => 200,
+                'message' => 'Match updated successfully', 'match' => $match
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+
+            return response()->json([
+                "statuscode" => 422,
+                "message" => $th->validator->errors()->first()  
+            ], 422);
+        }    
 
     }
 
     /**
      * @OA\Delete(
      *      tags={"Matches"},
-     *      path="/api/matches/{id}",
+     *      path="/api/v1/matches/{id}",
      *      summary="Delete matches",
      *      security={{"sanctum":{}}},
      *      @OA\Parameter(
@@ -521,18 +544,24 @@ class MatchesController extends Controller
         $match = Matches::find($id);
 
         if (!$match) {
-            return response()->json(['message' => 'Match not found'], 404);
+            return response()->json([
+                'statuscode' => 404,    
+                'message' => 'Match not found'
+            ], 404);
         }
     
         $match->delete();
     
-        return response()->json(['message' => 'Match deleted successfully'], 200);
+        return response()->json([
+            'statuscode' => 200,
+            'message' => 'Match deleted successfully'
+        ], 200);
     }
 
     /**
      * @OA\Get(
      *      tags={"Matches"},
-     *      path="/api/matches/report",
+     *      path="/api/v1/matches/report",
      *      summary="Get All matches as Report",
      *      @OA\Parameter(
      *         name="id",
@@ -550,7 +579,16 @@ class MatchesController extends Controller
      *                  type="integer", 
      *                  example="200"
      *              ),
-     *              
+     *              @OA\Property(
+     *                  property="message", 
+     *                  type="string", 
+     *                  example="Data found"
+     *              ),
+     *              @OA\Property(
+     *                  property="data", 
+     *                  type="object", 
+     *                  
+     *              ),
      *          ), 
      *      ),
      *      @OA\Response(
@@ -565,7 +603,7 @@ class MatchesController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Team not Found"
+     *                  example="Data not Found"
      *              ),
      *          ), 
      *      ), 
@@ -599,48 +637,60 @@ class MatchesController extends Controller
 
         $report = [];
 
-        foreach ($matches as $match) {
-            // Hitung status akhir pertandingan
-            $status = "Draw";
-            if ($match->home_score > $match->away_score) {
-                $status = "Tim Home Menang";
-            } elseif ($match->home_score < $match->away_score) {
-                $status = "Tim Away Menang";
+        if(count($matches)>0) {
+            foreach ($matches as $match) {
+                // Hitung status akhir pertandingan
+                $status = "Draw";
+                if ($match->home_score > $match->away_score) {
+                    $status = "Tim Home Menang";
+                } elseif ($match->home_score < $match->away_score) {
+                    $status = "Tim Away Menang";
+                }
+
+                // Hitung pencetak gol terbanyak
+                $goalCounts = $match->goals->groupBy('player_id')
+                    ->map(fn($goals) => count($goals));
+                $topScorerId = $goalCounts->sortDesc()->keys()->first();
+                $topScorer = $topScorerId 
+                    ? Player::find($topScorerId)->name 
+                    : null;
+
+                // Hitung total kemenangan masing-masing tim
+                $homeWins = Matches::where('home_team_id', $match->home_team_id)
+                    ->whereColumn('home_score', '>', 'away_score')
+                    ->count();
+
+                $awayWins = Matches::where('away_team_id', $match->away_team_id)
+                    ->whereColumn('away_score', '>', 'home_score')
+                    ->count();
+
+                // Tambahkan data ke laporan
+                $report[] = [
+                    'match_date' => $match->match_date,
+                    'match_time' => $match->match_time,
+                    'home_team' => $match->homeTeam->name,
+                    'away_team' => $match->awayTeam->name,
+                    'home_score' => $match->home_score,
+                    'away_score' => $match->away_score,
+                    'status' => $status,
+                    'top_scorer' => $topScorer,
+                    'home_wins_total' => $homeWins,
+                    'away_wins_total' => $awayWins,
+                ];
             }
 
-            // Hitung pencetak gol terbanyak
-            $goalCounts = $match->goals->groupBy('player_id')
-                ->map(fn($goals) => count($goals));
-            $topScorerId = $goalCounts->sortDesc()->keys()->first();
-            $topScorer = $topScorerId 
-                ? Player::find($topScorerId)->name 
-                : null;
-
-            // Hitung total kemenangan masing-masing tim
-            $homeWins = Matches::where('home_team_id', $match->home_team_id)
-                ->whereColumn('home_score', '>', 'away_score')
-                ->count();
-
-            $awayWins = Matches::where('away_team_id', $match->away_team_id)
-                ->whereColumn('away_score', '>', 'home_score')
-                ->count();
-
-            // Tambahkan data ke laporan
-            $report[] = [
-                'match_date' => $match->match_date,
-                'match_time' => $match->match_time,
-                'home_team' => $match->homeTeam->name,
-                'away_team' => $match->awayTeam->name,
-                'home_score' => $match->home_score,
-                'away_score' => $match->away_score,
-                'status' => $status,
-                'top_scorer' => $topScorer,
-                'home_wins_total' => $homeWins,
-                'away_wins_total' => $awayWins,
-            ];
+            return response()->json([
+                "statuscode" => 200,
+                "message" => "Data found",
+                "data" => $report
+            ], 200);
         }
-
-        return response()->json($report, 200);
+        else {
+            return response()->json([
+                "statuscode" => 404,
+                "message" => "Data Not found",
+            ], 404);
+        } 
     }
 
 }
