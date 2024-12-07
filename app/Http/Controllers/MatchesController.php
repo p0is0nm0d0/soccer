@@ -69,7 +69,7 @@ class MatchesController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Matches not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 
@@ -79,7 +79,7 @@ class MatchesController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Team not Found"
+     *                  example="Matches not Found"
      *              ),
      *          ), 
      *      ), 
@@ -106,11 +106,19 @@ class MatchesController extends Controller
     {
         $matches = Matches::with(['homeTeam', 'awayTeam'])->get();
 
-        return response()->json([
-            'statuscode' => 200,
-            'message' => 'Matches retrieved successfully',
-            'data' => $matches,
-        ]);
+        if(count(matches)>0) {
+            return response()->json([
+                'statuscode' => 200,
+                'message' => 'Matches retrieved successfully',
+                'data' => $matches,
+            ]);
+        } 
+        else {
+            return response()->json([
+                'statuscode' => 404,
+                'message' => 'Matches not found',
+            ]);
+        }    
     }
 
     /**
@@ -239,7 +247,7 @@ class MatchesController extends Controller
      *      @OA\Parameter(
      *         name="id",
      *         in="query",
-     *         description="Team id",
+     *         description="Matches id",
      *         required=true,
      *      ), 
      *      security={{"sanctum":{}}},
@@ -297,7 +305,7 @@ class MatchesController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Matches not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 
@@ -307,7 +315,7 @@ class MatchesController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Team not Found"
+     *                  example="Matches not Found"
      *              ),
      *          ), 
      *      ), 
@@ -336,7 +344,7 @@ class MatchesController extends Controller
         $match = Matches::with(['homeTeam', 'awayTeam', 'goals.player'])->find($id);
 
         if (!$match) {
-            return response()->json(['message' => 'Match not found'], 404);
+            return response()->json(['message' => 'Matches not found'], 404);
         }
 
         return response()->json($match, 200);
@@ -443,7 +451,7 @@ class MatchesController extends Controller
         if (!$match) {
             return response()->json([
                 'statuscode' => 404,
-                'message' => 'Match not found'
+                'message' => 'Matches not found'
             ], 404);
         }
 
@@ -566,7 +574,7 @@ class MatchesController extends Controller
      *      @OA\Parameter(
      *         name="id",
      *         in="query",
-     *         description="Team id",
+     *         description="Matches id",
      *         required=true,
      *      ), 
      *      security={{"sanctum":{}}},
@@ -593,7 +601,7 @@ class MatchesController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Matches not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 

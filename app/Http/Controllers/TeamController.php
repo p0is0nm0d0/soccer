@@ -106,12 +106,19 @@ class TeamController extends Controller
     public function index(): JsonResponse
     {
         $teams = Team::all();
-
-        return response()->json([
-            'statuscode' => 200,
-            'message' => 'Teams retrieved successfully',
-            'data' => $teams,
-        ]);
+        if(count(teams)>0) {
+            return response()->json([
+                'statuscode' => 200,
+                'message' => 'Teams retrieved successfully',
+                'data' => $teams,
+            ]);
+        }
+        else {
+            return response()->json([
+                'statuscode' => 404,
+                'message' => 'Teams not found',
+            ]);
+        }
     }
 
     /**

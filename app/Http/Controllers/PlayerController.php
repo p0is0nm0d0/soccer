@@ -74,7 +74,7 @@ class PlayerController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Player not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 
@@ -84,7 +84,7 @@ class PlayerController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Team not Found"
+     *                  example="Player not Found"
      *              ),
      *          ), 
      *      ), 
@@ -111,12 +111,20 @@ class PlayerController extends Controller
     {
         //
         $players = Player::with('team')->get();
-
-        return response()->json([
-            'statuscode' => 200,
-            'message' => 'Players retrieved successfully',
-            'data' => $players,
-        ]);
+        if(count($players)>0) {
+            return response()->json([
+                'statuscode' => 200,
+                'message' => 'Players retrieved successfully',
+                'data' => $players,
+            ],200);
+        }
+        else {
+            return response()->json([
+                'statuscode' => 404,
+                'message' => 'Players not found',
+                
+            ],404);
+        }
     }
 
     /**
@@ -319,7 +327,7 @@ class PlayerController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Player not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 
@@ -329,7 +337,7 @@ class PlayerController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Team not Found"
+     *                  example="Player not Found"
      *              ),
      *          ), 
      *      ), 
@@ -357,10 +365,17 @@ class PlayerController extends Controller
         $player = Player::find($id);
 
         if (!$player) {
-            return response()->json(['message' => 'Player not found'], 404);
+            return response()->json([
+                "statuscode" => 404,
+                'message' => 'Player not found'
+            ], 404);
         }
 
-        return response()->json($player, 200);
+        return response()->json([
+            "statuscode" => 200,
+            "message" => "Data Found",
+            "data" => $player
+        ], 200);
     }
 
 
@@ -533,7 +548,7 @@ class PlayerController extends Controller
      *      ),
      *      @OA\Response(
      *         response="404",
-     *         description="Team not Found",
+     *         description="Player not Found",
      *          @OA\JsonContent(
      *              @OA\Property(
      *                  property="statuscode", 
