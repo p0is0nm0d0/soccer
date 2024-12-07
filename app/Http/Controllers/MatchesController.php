@@ -469,7 +469,7 @@ class MatchesController extends Controller
 
             return response()->json([
                 'statuscode' => 200,
-                'message' => 'Match updated successfully', 'match' => $match
+                'message' => 'Matches updated successfully', 'match' => $match
             ], 200);
         } catch (\Illuminate\Validation\ValidationException $th) {
 
@@ -524,7 +524,7 @@ class MatchesController extends Controller
      *              @OA\Property(
      *                  property="message", 
      *                  type="string", 
-     *                  example="Match not found."
+     *                  example="Matches not found."
      *              ),
      *          ), 
      *      ), 
@@ -554,7 +554,7 @@ class MatchesController extends Controller
         if (!$match) {
             return response()->json([
                 'statuscode' => 404,    
-                'message' => 'Match not found'
+                'message' => 'Matches not found'
             ], 404);
         }
     
@@ -562,7 +562,7 @@ class MatchesController extends Controller
     
         return response()->json([
             'statuscode' => 200,
-            'message' => 'Match deleted successfully'
+            'message' => 'Matches deleted successfully'
         ], 200);
     }
 
